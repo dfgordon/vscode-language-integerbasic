@@ -55,8 +55,23 @@ export class TSDiagnosticProvider extends lxbase.LineNumberTool
 				diag.push(new vscode.Diagnostic(rng,'Line number is not a number')); // should not happen
 			else if (parsed<0 || parsed>32767)
 				diag.push(new vscode.Diagnostic(rng,'Out of range (0,32767)'));
-			else if (nums.indexOf(parsed)==-1 && curs.currentNode().previousNamedSibling)
-				diag.push(new vscode.Diagnostic(rng,'Line does not exist'));
+			// else if (nums.indexOf(parsed)==-1 && curs.currentNode().previousNamedSibling)
+			// 	diag.push(new vscode.Diagnostic(rng,'Line does not exist'));
+		}
+		if (curs.nodeType=="integer")
+		{
+			const prev = curs.currentNode().previousNamedSibling;
+			if (prev)
+				if (["statement_goto","statement_gosub","statement_then_line"].indexOf(prev.type)>=0)
+				{
+					const parsed = parseInt(curs.nodeText.replace(/ /g,''));
+					if (isNaN(parsed))
+						diag.push(new vscode.Diagnostic(rng,'Line number is not a number')); // should not happen
+					else if (parsed<0 || parsed>32767)
+						diag.push(new vscode.Diagnostic(rng,'Out of range (0,32767)'));
+					else if (nums.indexOf(parsed)==-1)
+						diag.push(new vscode.Diagnostic(rng,'Line does not exist'));
+				}
 		}
 		if (curs.nodeType=="statement_poke")
 		{
