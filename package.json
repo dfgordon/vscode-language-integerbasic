@@ -1,0 +1,202 @@
+{
+	"name": "vscode-language-integerbasic",
+	"displayName": "Integer BASIC",
+	"description": "Language support for Integer BASIC",
+	"icon": "language-intbasic-icon.png",
+	"version": "0.0.0",
+	"license": "GPL-3.0-only",
+	"publisher": "dfgordon",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/dfgordon/vscode-language-integerbasic"
+	},
+	"engines": {
+		"vscode": "^1.56.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"activationEvents": [
+		"onLanguage:integerbasic",
+		"onCommand:integerbasic.commentLines",
+		"onCommand:integerbasic.renumber",
+		"onCommand:integerbasic.runFrontVii",
+		"onCommand:integerbasic.enterFrontVii",
+		"onCommand:integerbasic.runNewVii",
+		"onCommand:integerbasic.enterNewVii",
+		"onCommand:integerbasic.getFrontVii",
+		"onCommand:integerbasic.getAppleWinSaveState",
+		"onCommand:integerbasic.setAppleWinSaveState",
+		"onCommand:integerbasic.showTokenizedProgram"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"configuration": {
+			"title": "Integer BASIC",
+			"properties": {
+				"integerbasic.case.caseSensitive": {
+					"type": "boolean",
+					"default": false,
+					"description": "Lower case is considered an error."
+				},
+				"integerbasic.case.lowerCaseCompletions": {
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "Use lower case in completions and snippets (ingored if `#integerbasic.caseSensitive#`)."
+				},
+				"integerbasic.hovers.specialAddresses": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Show hovers for special addresses such as ROM routines, soft switches, etc."
+				},
+				"integerbasic.hovers.keywords": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Show hovers for keywords such as `PRINT`, `FOR`, etc.."
+				},
+				"integerbasic.vii.speed": {
+					"enum": [
+						"regular",
+						"high",
+						"maximum"
+					],
+					"default": "maximum",
+					"markdownDescription": "Emulator speed to set before running code in Virtual ]["
+				},
+				"integerbasic.vii.color": {
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "Use color monitor when spawning a new Virtual ][ machine"
+				},
+				"integerbasic.warn.run": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Warn before writing to an emulator or emulator state file"
+				}
+			}
+		},
+		"languages": [
+			{
+				"id": "integerbasic",
+				"extensions": [
+					".bas",
+					".ibas",
+					".I"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"commands": [
+			{
+				"command": "integerbasic.commentLines",
+				"title": "integerbasic: (Un)Comment Selection"
+			},
+			{
+				"command": "integerbasic.renumber",
+				"title": "integerbasic: Renumber Lines"
+			},
+			{
+				"command": "integerbasic.runFrontVii",
+				"title": "integerbasic: Run in Virtual ][ front machine"
+			},
+			{
+				"command": "integerbasic.enterFrontVii",
+				"title": "integerbasic: Enter in Virtual ][ front machine"
+			},
+			{
+				"command": "integerbasic.runNewVii",
+				"title": "integerbasic: Run in Virtual ][ new machine"
+			},
+			{
+				"command": "integerbasic.enterNewVii",
+				"title": "integerbasic: Enter in Virtual ][ new machine"
+			},
+			{
+				"command": "integerbasic.getFrontVii",
+				"title": "integerbasic: Insert program from Virtual ][ front machine"
+			},
+			{
+				"command": "integerbasic.getAppleWinSaveState",
+				"title": "integerbasic: Insert program from AppleWin save state"
+			},
+			{
+				"command": "integerbasic.setAppleWinSaveState",
+				"title": "integerbasic: Store program in AppleWin save state"
+			},
+			{
+				"command": "integerbasic.showTokenizedProgram",
+				"title": "integerbasic: Show tokenized program"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "integerbasic.commentLines",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.renumber",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.runFrontVii",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.enterFrontVii",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.runNewVii",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.enterNewVii",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.getFrontVii",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.getAppleWinSaveState",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.setAppleWinSaveState",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.showTokenizedProgram",
+					"when": "editorLangId == integerbasic"
+				}
+			]
+		}
+	},
+	"dependencies": {
+		"web-tree-sitter": "^0.20.3",
+		"yaml": "^2.0.0-10"
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run esbuild-base -- --minify",
+		"esbuild-base": "rm -rf out && mkdir out && cp src/*.wasm out/ && cp src/*.scpt out/ && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+		"build": "npm run esbuild-base -- --sourcemap",
+		"lint": "eslint . --ext .ts,.tsx",
+		"test-compile": "rm -rf out && mkdir out && cp src/*.wasm out/ && tsc -p ./",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.2.0",
+		"@types/mocha": "^9.1.0",
+		"@types/node": "^14.16.0",
+		"@types/vscode": "^1.42.0",
+		"@typescript-eslint/eslint-plugin": "^4.16.0",
+		"@typescript-eslint/parser": "^4.16.0",
+		"@vscode/test-electron": "^2.1.2",
+		"esbuild": "^0.14.25",
+		"eslint": "^7.21.0",
+		"glob": "^7.2.0",
+		"mocha": "^9.2.0",
+		"typescript": "^4.5.5"
+	}
+}
