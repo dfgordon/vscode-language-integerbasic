@@ -196,7 +196,7 @@ export class ViiEntryTool extends lxbase.LangExtBase
 		}
 		else
 		{
-			const newMachine = vscode.workspace.getConfiguration('integerbasic').get('vii.newMachine') as string;
+			const newMachine = "appleii";
 			this.actionViiGo(action,newMachine);
 		}
 	}
@@ -358,17 +358,43 @@ export class TokenizationTool extends lxbase.LangExtBase
 		let addr = img[202] + img[203]*256;
 		let himem = img[76] + img[77]*256;
 		let code = '\n';
-		while (addr < himem) {
+		while (addr < himem)
+		{
 			addr += 1; // skip record length
 			const line_num = img[addr] + img[addr+1]*256;
 			code += line_num.toString() + ' ';
 			addr += 2;
-			while (img[addr]!=1) {
+			let tokenCount = 0;
+			while (img[addr]!=1)
+			{
 				if (img[addr]<128)
-					code += ' ' + Object(detokenize_map)[img[addr].toString()].toUpperCase() + ' ';
+				{
+					const tok = Object(detokenize_map)[img[addr].toString()].toUpperCase();
+					if (tok.length>1 && tokenCount>0)
+						code += ' ';
+					code += tok;
+					if (tok.length>1)
+						code += ' ';
+					addr += 1;
+				}
 				else
-					code += String.fromCharCode(img[addr]-128);
-				addr += 1;
+				{
+					if (img[addr]>=176 && img[addr]<=185)
+					{
+						// next 2 bytes are a binary number
+						code += (img[addr+1]+img[addr+2]*256).toString();
+						addr += 3;
+					}
+					{
+						// this is a variable name
+						while (img[addr]>=128)
+						{
+							code += String.fromCharCode(img[addr]-128);
+							addr += 1;
+						}
+					}
+				}
+				tokenCount += 1;
 			}
 			code += '\n';
 			addr += 1;

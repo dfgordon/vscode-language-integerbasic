@@ -1,7 +1,8 @@
 on waitForTyping(theMachine)
 	tell application "Virtual ]["
 		tell theMachine
-			type line "VTAB 24: PRINT \"FINISHED\""
+			type line "VTAB 24"
+			type line "PRINT \"FINISHED\""
 			repeat
 				delay 0.5
 				if the last word of line 22 of the screen text = "FINISHED" then
@@ -16,7 +17,7 @@ on enterProgram(theMachine, t)
 	tell application "Virtual ]["
 		tell theMachine
 			type line "TEXT"
-			type line "HOME"
+			type line "CALL -936"
 			type line "NEW"
 			type line "POKE 35,15"
 			type text t
@@ -57,7 +58,6 @@ on run argv
 		if machineType is "appleii" then
 			set theMachine to (make new AppleII)
 			delay pause
-			reset theMachine
 		end if
 		if machineType is "appleiiplus" then
 			set theMachine to (make new AppleIIPlus)
@@ -78,6 +78,10 @@ on run argv
 		delay pause
 		if action is not "get"
 			tell theMachine
+				if machineType is "appleii"
+					type ctrl "B"
+					type line ""
+				end if
 				set speed to maximum
 				if machineType is not "front" and colorMonitor is "0" then
 					set monochrome screen to true
