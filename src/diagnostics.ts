@@ -45,7 +45,7 @@ export class TSDiagnosticProvider extends lxbase.LineNumberTool
 		}
 		if (curs.nodeType=="line")
 		{
-			if (curs.currentNode().text.trimEnd().length>150)
+			if (curs.currentNode().text.trimEnd().length>(this.config.get('warn.length') as number))
 				diag.push(new vscode.Diagnostic(rng,'Line may be too long',vscode.DiagnosticSeverity.Warning));
 		}
 		if (curs.nodeType=="linenum")
@@ -101,6 +101,19 @@ export class TSDiagnosticProvider extends lxbase.LineNumberTool
 			const addr = curs.currentNode().nextNamedSibling;
 			if (addr)
 				this.value_range(diag,addr,-32767,32767);
+		}
+		if (curs.nodeType=="int_name" || curs.nodeType=="str_name")
+		{
+			const parent = curs.currentNode().parent;
+			if (parent && !curs.currentNode().previousNamedSibling)
+			{
+				if (parent.type=="assignment_str" || parent.type=="assignment_int")
+				{
+					const errPattern = new RegExp('^ *(D *S *P|N *O *D *S *P|N *E *X *T|I *N *P *U *T) *[A-Z]');
+					if (curs.currentNode().text.search(errPattern)!=-1)
+						diag.push(new vscode.Diagnostic(rng,'illegal variable name, try LET'));
+				}
+			}
 		}
 		return true;
 	}

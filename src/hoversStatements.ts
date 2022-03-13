@@ -24,11 +24,9 @@ export class StatementHovers
 			new vscode.MarkdownString('`ASC (sexpr)`')
 		]);
 		this.hmap.set("statement_call",[
-			new vscode.MarkdownString('Call machine language subroutine at decimal address.  The optional string argument is only for specialized object code like `CHAIN`.'),
-			new vscode.MarkdownString('`CALL aexpr [string]`'),
-			exampleString([
-				'CALL 768',
-				'CALL 520"NEXT PROGRAM"'])
+			new vscode.MarkdownString('Call machine language subroutine at decimal address.'),
+			new vscode.MarkdownString('`CALL aexpr`'),
+			exampleString(['CALL 768'])
 		]);
 		this.hmap.set("statement_coloreq",[
 			new vscode.MarkdownString('Set the low resolution color'),
@@ -51,12 +49,12 @@ export class StatementHovers
 			new vscode.MarkdownString('`FOR name = aexpr TO aexpr [STEP aexpr]`')
 		]);
 		this.hmap.set("statement_gosub",[
-			new vscode.MarkdownString('Execute the subroutine starting at the given line number.  Variables cannot be used.'),
-			new vscode.MarkdownString('`GOSUB linenum`')
+			new vscode.MarkdownString('Execute the subroutine starting at the given line number, which can be an expression.'),
+			new vscode.MarkdownString('`GOSUB aexpr`')
 		]);
 		this.hmap.set("statement_goto",[
-			new vscode.MarkdownString('Branch to the given line number.  Variables cannot be used.'),
-			new vscode.MarkdownString('`GOTO linenum`')
+			new vscode.MarkdownString('Branch to the given line number, which can be an expression.'),
+			new vscode.MarkdownString('`GOTO aexpr`')
 		]);
 		this.hmap.set("statement_gr",[
 			new vscode.MarkdownString('Switch to low resolution graphics and clear the screen.'),
@@ -90,7 +88,7 @@ export class StatementHovers
 			new vscode.MarkdownString('`LEN (sexpr)`')
 		]);
 		this.hmap.set("statement_let",[
-			new vscode.MarkdownString('`LET` is optional in assignments')
+			new vscode.MarkdownString('`LET` is optional in assignments. It can widen the range of acceptable variable names.')
 		]);
 		this.hmap.set("statement_list",[
 			new vscode.MarkdownString('output program listing to current device'),
@@ -98,7 +96,7 @@ export class StatementHovers
 		]);
 		this.hmap.set("statement_next",[
 			new vscode.MarkdownString('Mark the end of a loop.'),
-			new vscode.MarkdownString('`NEXT [avar[{,avar}]]`')
+			new vscode.MarkdownString('`NEXT avar[{,avar}]`')
 		]);
 		this.hmap.set("statement_nodsp",[
 			new vscode.MarkdownString('Do not watch variable during execution.'),
@@ -134,7 +132,7 @@ export class StatementHovers
 		]);
 		this.hmap.set("statement_print",[
 			new vscode.MarkdownString('Write to the current output device.'),
-			new vscode.MarkdownString('`PRINT [{expr,|expr;}]`'),
+			new vscode.MarkdownString('`PRINT [expr[{,expr|;expr|,|;}]]`'),
 			exampleString([
 				'PRINT',
 				'PRINT A$, "X = ";X'])

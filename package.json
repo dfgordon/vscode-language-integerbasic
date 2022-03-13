@@ -72,6 +72,11 @@
 					"type": "boolean",
 					"default": true,
 					"markdownDescription": "Warn before writing to an emulator or emulator state file"
+				},
+				"integerbasic.warn.length": {
+					"type": "number",
+					"default": 150,
+					"markdownDescription": "Line length warning threshold"
 				}
 			}
 		},

@@ -15,7 +15,7 @@ export class AddressHovers
 	{
 		const offset_names = Object({
 			"word" : ["low byte","high byte"] , "vector" : ["opcode","low addr","high addr"],
-			"float" : [..."12345"], "unpacked float": [..."123456"]
+			"float32" : [..."1234"], "float" : [..."12345"], "unpacked float": [..."123456"]
 		});
 		const addr = addr_base + offset;
 		const addr_unsigned = addr < 0 ? addr + 2**16 : addr;
@@ -57,6 +57,8 @@ export class AddressHovers
 					this.add(property,addr,1);
 				if (typ=="vector")
 					[1,2].forEach( n => this.add(property,addr,n) );
+				if (typ=="float32")
+					[1,2,3].forEach( n => this.add(property,addr,n) );
 				if (typ=="float")
 					[1,2,3,4].forEach( n => this.add(property,addr,n) );
 				if (typ=="unpacked float")
