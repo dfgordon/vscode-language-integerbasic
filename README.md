@@ -17,7 +17,7 @@ If you are viewing this on github, you can install the extension from VS Code by
 * Commands: see `Ctrl+P` -> `integerbasic`
 * Activates for file extensions `.bas`, `.ibas`, `.I`
 
-<img src="demo.gif" alt="session capture"/>
+<img src="demo.png" alt="session capture"/>
 
 ## Apple ][ Special Addresses
 
