@@ -226,8 +226,11 @@ export class TokenizationTool extends lxbase.LangExtBase
 	// We use the name `raw_str` to indicate that the string may contain binary data encoded
 	// in this straightforward way.  When transferring to/from A2 memory images the
 	// low bytes from the code points are put into a Uint8Array.
+	// WARNING: text based manipulations are unsafe on `raw_str`.
+	// The `persistentSpace` code is used to allow spaces to be safely stripped from `raw_str`.
 	tokenizedProgram = "";
 	tokenizedLine = "";
+	persistentSpace = String.fromCharCode(256); // value chosen to never overlap binary data
 	encode_int16(int16: number) : string
 	{
 		const hiByte = Math.floor(int16/256);
@@ -291,7 +294,7 @@ export class TokenizationTool extends lxbase.LangExtBase
 		{
 			const val = parseInt(curs.nodeText.replace(/ /g,''));
 			const firstDigit = parseInt(val.toString(10)[0]); // effectively strips leading zeros
-			let repl = this.encode_int16(val);
+			let repl = this.encode_int16(val).replace(/ /g,this.persistentSpace);
 			const parent = curs.currentNode().parent;
 			if (!(parent && parent.type=='line'))
 				repl = String.fromCharCode(176+firstDigit) + repl;
@@ -305,8 +308,10 @@ export class TokenizationTool extends lxbase.LangExtBase
 		// Put variables in upper case and negative ASCII
 		if (lxbase.VariableTypes.indexOf(curs.nodeType)>-1)
 		{
-			const repl = this.to_negative_ascii(curs.nodeText.replace(/ /g,'').toUpperCase());
+			const repl = this.to_negative_ascii(curs.nodeText.replace(/ /g,'').toUpperCase())
+				.replace(String.fromCharCode(164),String.fromCharCode(64)); // tokenize $
 			this.tokenizedLine = this.replace_curs(repl,curs);
+			return lxbase.WalkerOptions.gotoSibling; // already tokenized $
 		}
 		
 		// String or comment text to negative ASCII
@@ -323,7 +328,8 @@ export class TokenizationTool extends lxbase.LangExtBase
 			return lxbase.WalkerOptions.gotoChild;
 		this.tokenizedLine = curs.nodeText;
 		let lineTree = this.parse(this.tokenizedLine);
-		// First zero pad all the numbers to guarantee at least 3 characters
+		// First pad numbers to guarantee at least 3 characters
+		// This relies on negative numbers always being in a unary aexpr
 		const numQuery = this.parser.getLanguage().query('[(integer)(linenum)] @int16');
 		let mtch = numQuery.captures(lineTree.rootNode);
 		for (let s=0;s<mtch.length;s++)
@@ -337,7 +343,8 @@ export class TokenizationTool extends lxbase.LangExtBase
 		this.walk(lineTree,this.tokenize_node.bind(this));
 		const lineBody = this.tokenizedLine.
 			trimEnd().
-			replace(/ /g,'');
+			replace(/ /g,'').
+			replace(RegExp(this.persistentSpace,'g'),' ');
 		if (lineBody.length>253)
 		{
 			this.tokenizedProgram = 'err: line too long';
@@ -356,7 +363,7 @@ export class TokenizationTool extends lxbase.LangExtBase
 	detokenize(img: Buffer) : string
 	{
 		let addr = img[202] + img[203]*256;
-		let himem = img[76] + img[77]*256;
+		const himem = img[76] + img[77]*256;
 		let code = '\n';
 		while (addr < himem)
 		{
@@ -498,7 +505,6 @@ export class TokenizationTool extends lxbase.LangExtBase
 		const verified = this.verify_document();
 		if (!verified)
 			return;
-		const config = vscode.workspace.getConfiguration('integerbasic');
 		vscode.window.showOpenDialog({
 			"canSelectMany": false,
 			"canSelectFiles":true,

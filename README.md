@@ -15,9 +15,9 @@ If you are viewing this on github, you can install the extension from VS Code by
 * View tokenized program as hex dump and unicode text
 * Options : see `Ctrl+Comma` -> `Extensions` -> `Integer BASIC`
 * Commands: see `Ctrl+P` -> `integerbasic`
-* Activates for file extensions `.bas`, `.ibas`, `.I`
+* Activates for file extensions `.bas`, `.ibas`
 
-<img src="demo.png" alt="session capture"/>
+<img src="sample/demo.png" alt="session capture"/>
 
 ## Apple ][ Special Addresses
 
@@ -30,7 +30,7 @@ You can transfer programs to and from [AppleWin](https://github.com/AppleWin/App
 * To transfer a program to [AppleWin](https://github.com/AppleWin/AppleWin), first use [AppleWin](https://github.com/AppleWin/AppleWin) to create a state file (press `F11`).  Then in the editor use `Ctrl-P` to select `integerbasic: Store program in AppleWin save state`, and select the state file.  Then go to [AppleWin](https://github.com/AppleWin/AppleWin) and press `F12` to load the modified state file.  Type `LIST` to verify success.
 	- Any program or variables already in the state file are lost.
 	- The state file used for this should be a "safe state," e.g., machine awaiting line entry.
-	- Start of program space (103,104) and `HIMEM` are retained, `LOMEM` is reset.  If the program would break `HIMEM` the operation is aborted.
+	- Both `LOMEM` and `HIMEM` are retained.  If the program would break `LOMEM` the operation is aborted.
 * To transfer a program from [AppleWin](https://github.com/AppleWin/AppleWin), make sure the program is in the emulated machine's memory, and create a state file by pressing `F11`.  Once you have the state file, return to the editor, position the cursor at the insertion point, and use `Ctrl-P` to select `integerbasic: Insert program from AppleWin save state`.  Select the state file and the program should be inserted.
 
 Operations with the state file are the same on any platform, but [AppleWin](https://github.com/AppleWin/AppleWin) itself is native to Windows.  Note that [AppleWin](https://github.com/AppleWin/AppleWin) is not part of the extension, and must be installed separately.
