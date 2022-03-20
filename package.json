@@ -3,7 +3,7 @@
 	"displayName": "Integer BASIC",
 	"description": "Language support for Integer BASIC",
 	"icon": "language-intbasic-icon.png",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"license": "GPL-3.0-only",
 	"publisher": "dfgordon",
 	"repository": {
