@@ -54,7 +54,7 @@ describe('Output Statements', async function() {
 	});
 	it('single line', function() {
 		const testCode = '10 TEXT\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "050A004B01";
@@ -62,7 +62,7 @@ describe('Output Statements', async function() {
 	});
 	it('multi line', function() {
 		const testCode = '10 TEXT\n20 PRINT "HELLO"\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "050A004B010C14006128C8C5CCCCCF2901";
@@ -70,7 +70,7 @@ describe('Output Statements', async function() {
 	});
 	it('print with nulls', function() {
 		const testCode = '10 print a,B, ,C;d$;;;E$\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "130A0062C149C24A49C345C440474745C54001";
@@ -85,7 +85,7 @@ describe('Expressions', async function() {
 	});
 	it('simple', function() {
 		const testCode = '10 X = 1 + 1\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "0D0A00D871B1010012B1010001";
@@ -93,7 +93,7 @@ describe('Expressions', async function() {
 	});
 	it('negative numbers', function() {
 		const testCode = '10 X = -1\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "0A0A00D87136B1010001";
@@ -101,7 +101,7 @@ describe('Expressions', async function() {
 	});
 	it('double negative', function() {
 		const testCode = '10 X = - - 1\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "0B0A00D8713636B1010001";
@@ -109,7 +109,7 @@ describe('Expressions', async function() {
 	});
 	it('nested', function() {
 		const testCode = '10 X = 6*(1 + (X1 + X2)*5)\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "1B0A00D871B606001438B101001238D8B112D8B27214B505007201";
@@ -117,7 +117,7 @@ describe('Expressions', async function() {
 	});
 	it('logic values', function() {
 		const testCode = '10 COLOR = I/2*(I<32)\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "120A0066C915B202001438C91CB320007201";
@@ -125,7 +125,7 @@ describe('Expressions', async function() {
 	});
 	it('with functions', function() {
 		const testCode = '10 X = 6*(abs(X0) + (sgn(X1) + asc(A$))*5)\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "220A00D871B606001438313FD8B0721238303FD8B172123CC140727214B505007201";
@@ -140,7 +140,7 @@ describe('Graphics', async function() {
 	});
 	it('low res statements', function() {
 		const testCode = '10 gr: color=4\n20 X=5:Y=5\n30 plot X,Y\n40 hlin X+1,X+10 at Y\n50 vlin Y+1,Y+10 at X';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "0A0A004C0366B40400010F1400D871B5050003D971B5050001081E0067D868D90112280069D812B101006AD812B10A006BD9011232006CD912B101006DD912B10A006ED801";
@@ -148,7 +148,7 @@ describe('Graphics', async function() {
 	});
 	it('low res functions', function() {
 		const testCode = '10 C = SCRN(X,Y)';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "0B0A00C3713DD83ED97201";
@@ -163,7 +163,7 @@ describe('Control', async function() {
 	});
 	it('binary ascii collisions', function() {
 		const testCode = '32 x = 32';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "092000D871B3200001";
@@ -171,7 +171,7 @@ describe('Control', async function() {
 	});
 	it('goto, gosub, end, return', function() {
 		const testCode = '10 gosub 1000: goto 100\n100 end\n1000 return';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "0D0A005CB1E803035FB1640001056400510105E8035B01";
@@ -179,7 +179,7 @@ describe('Control', async function() {
 	});
 	it('loop', function() {
 		const testCode = '10 for i = 1 to LAST: print i: next I';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "150A0055C956B1010057CCC1D3D40362C90359C901";
@@ -190,7 +190,7 @@ describe('Control', async function() {
 		testCode += '20 if X < Y then 1010\n';
 		testCode += '30 if X <> Y then 1020\n';
 		testCode += '40 if X = Y then 1030\n';
-		const tree = this.tokTool.parse(testCode);
+		const tree = this.tokTool.parse(testCode,'');
 		const tokStr = this.tokTool.tokenize(tree);
 		const actual = this.tokTool.hex_from_raw_str(tokStr);
 		const expected = "0C0A0060D819D924B1E803010C140060D81CD924B1F203010C1E0060D81BD924B1FC03010C280060D816D924B1060401";

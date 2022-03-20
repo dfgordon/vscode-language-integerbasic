@@ -100,7 +100,7 @@ export class RenumberTool extends lxbase.LineNumberTool
 				}
 				txt = verified.doc.getText(ext_sel);
 			}
-			let syntaxTree = this.parse(txt+"\n");
+			let syntaxTree = this.parse(txt,"\n");
 			const line_numbers = this.get_primary_nums(syntaxTree);
 			const lN = l0 + dl*(line_numbers.length-1);
 			if (!lower_guard)
@@ -122,7 +122,7 @@ export class RenumberTool extends lxbase.LineNumberTool
 				mapping.set(line_numbers[i],l0+i*dl);
 			// apply the mapping
 			txt = verified.doc.getText();
-			syntaxTree = this.parse(txt+"\n");
+			syntaxTree = this.parse(txt,"\n");
 			verified.ed.edit(editBuilder => { this.renumber(ext_sel,updateAll=='update all references',syntaxTree,mapping,editBuilder); });	
 		}
 	}
@@ -327,7 +327,7 @@ export class TokenizationTool extends lxbase.LangExtBase
 		if (curs.nodeType!="line")
 			return lxbase.WalkerOptions.gotoChild;
 		this.tokenizedLine = curs.nodeText;
-		let lineTree = this.parse(this.tokenizedLine);
+		let lineTree = this.parse(this.tokenizedLine,'');
 		// First pad numbers to guarantee at least 3 characters
 		// This relies on negative numbers always being in a unary aexpr
 		const numQuery = this.parser.getLanguage().query('[(integer)(linenum)] @int16');
@@ -336,7 +336,7 @@ export class TokenizationTool extends lxbase.LangExtBase
 		{
 			const node = mtch[s].node;
 			this.tokenizedLine = this.replace_node('00'+node.text,node,false);
-			lineTree = this.parse(this.tokenizedLine);
+			lineTree = this.parse(this.tokenizedLine,'');
 			mtch = numQuery.captures(lineTree.rootNode);
 		}
 		// Now we can tokenize in place
@@ -345,9 +345,9 @@ export class TokenizationTool extends lxbase.LangExtBase
 			trimEnd().
 			replace(/ /g,'').
 			replace(RegExp(this.persistentSpace,'g'),' ');
-		if (lineBody.length>253)
+		if (lineBody.length>126)
 		{
-			this.tokenizedProgram = 'err: line too long';
+			this.tokenizedProgram = 'error: line too long';
 			return lxbase.WalkerOptions.exit;
 		}
 		this.tokenizedLine = String.fromCharCode(lineBody.length+2) + lineBody + String.fromCharCode(1);
@@ -371,13 +371,12 @@ export class TokenizationTool extends lxbase.LangExtBase
 			const line_num = img[addr] + img[addr+1]*256;
 			code += line_num.toString() + ' ';
 			addr += 2;
-			let tokenCount = 0;
 			while (img[addr]!=1)
 			{
 				if (img[addr]<128)
 				{
 					const tok = Object(detokenize_map)[img[addr].toString()].toUpperCase();
-					if (tok.length>1 && tokenCount>0)
+					if (tok.length>1 && code.charAt(code.length-1)!=' ')
 						code += ' ';
 					code += tok;
 					if (tok.length>1)
@@ -401,7 +400,6 @@ export class TokenizationTool extends lxbase.LangExtBase
 						}
 					}
 				}
-				tokenCount += 1;
 			}
 			code += '\n';
 			addr += 1;
@@ -432,7 +430,7 @@ export class TokenizationTool extends lxbase.LangExtBase
 		const verified = this.verify_document();
 		if (!verified)
 			return;
-		const syntaxTree = this.parse(verified.doc.getText());
+		const syntaxTree = this.parse(verified.doc.getText(),"\n");
 		vscode.window.showOpenDialog({
 			"canSelectMany": false,
 			"canSelectFiles":true,
@@ -556,6 +554,16 @@ export class TokenizationTool extends lxbase.LangExtBase
 			}
 		});
 	}
+	flipAsciiSign(ascii : string) : string
+	{
+		let ans = '';
+		for (let i=0;i<ascii.length;i++)
+		{
+			const c = ascii.charCodeAt(i);
+			ans += c > 127 ? String.fromCharCode(c-128) : String.fromCharCode(c+128);
+		}
+		return ans;
+	}
 	async showTokenizedProgram()
 	{
 		let verified = this.verify_document();
@@ -564,19 +572,24 @@ export class TokenizationTool extends lxbase.LangExtBase
 		const proceed = await proceedDespiteErrors(verified.doc,'Tokenizing');
 		if (!proceed)
 			return;
-		const res = await vscode.window.showInputBox({title:'enter the upper address (38400)'});
+		const res = await vscode.window.showInputBox({title:'enter the upper address',placeHolder: '38400'});
+		if (res==undefined)
+			return;
 		const baseAddr = parseInt(res?res:"38400");
 		if (baseAddr<2052 || baseAddr>49151)
 		{
 			vscode.window.showErrorMessage('address is out of range (2052 - 49151)');
 			return;
 		}
+		const showUnicode = await vscode.window.showQuickPick(['unicode alongside hex','hex only'],{canPickMany:false,title:'select format'});
+		if (showUnicode==undefined)
+			return;
 		verified = this.verify_document();
 		if (!verified)
 			return;
-		const syntaxTree = this.parse(verified.doc.getText());
+		const syntaxTree = this.parse(verified.doc.getText(),"\n");
 		const code = this.tokenize(syntaxTree);
-		if (code.substring(0,3)=="err")
+		if (code.substring(0,6)=="error:")
 		{
 			vscode.window.showErrorMessage(code);
 			return;
@@ -586,12 +599,18 @@ export class TokenizationTool extends lxbase.LangExtBase
 		for (let i=0;i<code.length;i++)
 		{
 			if (i%8==0 && i>0)
-				content += '   ' + code.substring(i-8,i).replace(/\s/g,' ') + '\n';
+				if (showUnicode=='unicode alongside hex')
+					content += '   ' + this.flipAsciiSign(code.substring(i-8,i)).replace(/\s/g,' ') + '\n';
+				else
+					content += '\n';
 			if (i%8==0)
 				content += (startAddr+i).toString(16).padStart(4,'0').toUpperCase() + ': ';
 			content += code.charCodeAt(i).toString(16).padStart(2,'0').toUpperCase() + ' ';
 			if (i==code.length-1)
-				content += ' '.repeat(3+3*(7-i%8)) + code.substring(i-i%8,i+1).replace(/\s/g,' ') + '\n';
+				if (showUnicode=='unicode alongside hex')
+					content += ' '.repeat(3+3*(7-i%8)) + this.flipAsciiSign(code.substring(i-i%8,i+1)).replace(/\s/g,' ') + '\n';
+				else
+					content += '\n';
 		}
 		vscode.workspace.openTextDocument({content:content}).then(doc => {
 			vscode.window.showTextDocument(doc);

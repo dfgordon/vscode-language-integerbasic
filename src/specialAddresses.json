@@ -623,7 +623,8 @@
         "type": "soft switch"
     },
     "-144": {
-        "desc": "Scan input buffer.",
+        "brief": "Scan input buffer.",
+        "desc": "Monitor routine to process contents of input buffer, cf. Lam's method.",
         "type": "ROM routine"
     },
     "-151": {
