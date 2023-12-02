@@ -21,7 +21,7 @@ Latest update: LSP implementation, brings parity with Applesoft extension
 
 ## Other BASIC extensions
 
-If you use the extension `.bas`, you may want to disable all other BASIC language extensions, since they will likely use that extension also.  You can use `.ibas` to encourage this extension to analyze the file while discouraging others.
+If you use the file extension `.bas`, you may want to disable all other BASIC language extensions, since they will likely use that extension also.  You can use `.ibas` to encourage Integer BASIC to analyze the file while discouraging other BASIC.
 
 ## Line Numbers
 
@@ -29,7 +29,7 @@ The extension will treat line numbers as document symbols if they are explicit b
 
 ## Managing Variables
 
-By default, variables are treated as case insensitive (behavior controlled by settings), but will be put in upper case upon tokenization.  Unlike Applesoft, the rules governing identifiers that contain reserved words are quite complex, i.e., they are not entirely forbidden.  The extension should correctly produce a syntax error if an indentifier is invalid in a given context.
+By default, variables are treated as case insensitive (behavior controlled by settings), but will be put in upper case upon tokenization.  Unlike Applesoft, the rules governing identifiers that contain reserved words are quite complex.  The extension should correctly produce a syntax error if an indentifier is invalid in a given context.
 
 You can use `rename symbol` to quickly change the names of variables or functions.  For strings, you must include the `$` suffix in the replacement text, even though VS Code may offer a default without this.
 
@@ -57,7 +57,7 @@ The extension knows hundreds of special address locations relevant to Integer BA
 
 ## Hex Escapes
 
-Some Integer BASIC programs have line separators embedded in strings and/or comments.  Hex escapes are used to allow such files to be parsed as normal line entry.  For example, `PRINT "\x8aALERT!` uses `\x8a` to represent a line feed (remember in Integer BASIC character codes are inverted).
+Some Integer BASIC programs have line separators embedded in strings and/or comments.  Hex escapes are used to allow such files to be parsed as normal line entry.  For example, `PRINT "\x8aALERT!\x87` uses `\x8a` to represent a line feed and `\x87` to sound the bell (remember in Integer BASIC character codes are inverted).
 
 The extension evaluates *only* hex escapes.  Sequences like `\n`, `\\`, etc. are always treated literally.  If you need to escape the escape, hex-escape it, e.g. `\xff` can be escaped as `\x5cxff`.
 
