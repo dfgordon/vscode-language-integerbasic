@@ -3,7 +3,7 @@
 	"displayName": "Integer BASIC",
 	"description": "Language support for Integer BASIC",
 	"icon": "language-intbasic-icon.png",
-	"version": "0.0.2",
+	"version": "1.0.0",
 	"license": "GPL-3.0-only",
 	"publisher": "dfgordon",
 	"repository": {
@@ -11,25 +11,14 @@
 		"url": "https://github.com/dfgordon/vscode-language-integerbasic"
 	},
 	"engines": {
-		"vscode": "^1.56.0"
+		"vscode": "^1.75.0"
 	},
 	"categories": [
 		"Programming Languages"
 	],
 	"activationEvents": [
-		"onLanguage:integerbasic",
-		"onCommand:integerbasic.commentLines",
-		"onCommand:integerbasic.renumber",
-		"onCommand:integerbasic.runFrontVii",
-		"onCommand:integerbasic.enterFrontVii",
-		"onCommand:integerbasic.runNewVii",
-		"onCommand:integerbasic.enterNewVii",
-		"onCommand:integerbasic.getFrontVii",
-		"onCommand:integerbasic.getAppleWinSaveState",
-		"onCommand:integerbasic.setAppleWinSaveState",
-		"onCommand:integerbasic.showTokenizedProgram"
 	],
-	"main": "./out/extension.js",
+	"main": "./client/out/extension.js",
 	"contributes": {
 		"configuration": {
 			"title": "Integer BASIC",
@@ -68,6 +57,24 @@
 					"default": false,
 					"markdownDescription": "Use color monitor when spawning a new Virtual ][ machine"
 				},
+				"integerbasic.detokenizer.escapes": {
+					"type": "array",
+					"default": [
+						138,
+						141
+					],
+					"markdownDescription": "Negative ASCII control codes that should be escaped by the detokenizer"
+				},
+				"integerbasic.warn.undeclaredArrays": {
+					"type": "boolean",
+					"default": true,
+					"description": "Warn against arrays that have never been dimensioned."
+				},
+				"integerbasic.warn.undefinedVariables": {
+					"type": "boolean",
+					"default": true,
+					"description": "Warn against variables that have never been assigned."
+				},
 				"integerbasic.warn.run": {
 					"type": "boolean",
 					"default": true,
@@ -77,6 +84,14 @@
 					"type": "number",
 					"default": 150,
 					"markdownDescription": "Line length warning threshold"
+				},
+				"integerbasic.trace.server": {
+					"enum": [
+						"verbose",
+						"silent"
+					],
+					"default": "silent",
+					"markdownDescription": "Logging level for client/server messages"
 				}
 			}
 		},
@@ -129,6 +144,14 @@
 				"title": "integerbasic: Store program in AppleWin save state"
 			},
 			{
+				"command": "integerbasic.getFromDiskImage",
+				"title": "integerbasic: Insert program from disk image"
+			},
+			{
+				"command": "integerbasic.saveToDiskImage",
+				"title": "integerbasic: Save program to disk image"
+			},
+			{
 				"command": "integerbasic.showTokenizedProgram",
 				"title": "integerbasic: Show tokenized program"
 			}
@@ -172,41 +195,49 @@
 					"when": "editorLangId == integerbasic"
 				},
 				{
+					"command": "integerbasic.getFromDiskImage",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.saveToDiskImage",
+					"when": "editorLangId == integerbasic"
+				},
+				{
 					"command": "integerbasic.showTokenizedProgram",
 					"when": "editorLangId == integerbasic"
 				}
 			]
 		}
 	},
-	"dependencies": {
-		"web-tree-sitter": "^0.20.3",
-		"yaml": "^2.0.0-10"
-	},
 	"scripts": {
-		"reset": "run-script-os",
-		"reset:windows": "npx rimraf out && mkdir out && copy src\\*.wasm out && copy src\\*.scpt out",
-		"reset:default": "npx rimraf out && mkdir out && cp src/*.wasm out && cp src/*.scpt out",
-		"vscode:prepublish": "npm run esbuild-base -- --minify",
-		"esbuild-base": "npm run reset && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
-		"build": "npm run esbuild-base -- --sourcemap",
+		"reset-client": "run-script-os",
+		"reset-server": "run-script-os",
+		"reset-client:windows": "npx rimraf client\\out && mkdir client\\out && copy server\\src\\*.wasm client\\out && copy client\\src\\*.scpt client\\out",
+		"reset-client:default": "npx rimraf client/out && mkdir client/out && cp server/src/*.wasm client/out && cp client/src/*.scpt client/out",
+		"reset-server:windows": "npx rimraf server\\out && mkdir server\\out && copy server\\src\\*.wasm server\\out",
+		"reset-server:default": "npx rimraf server/out && mkdir server/out && cp server/src/*.wasm server/out",
+		"vscode:prepublish": "npm run esbuild-client -- --minify && npm run esbuild-server -- --minify",
+		"esbuild-client": "npm run reset-client && esbuild ./client/src/extension.ts --bundle --outfile=client/out/extension.js --external:vscode --format=cjs --platform=node",
+		"esbuild-server": "npm run reset-server && esbuild ./server/src/server.ts --bundle --outfile=server/out/server.js --external:vscode --format=cjs --platform=node",
+		"build": "npm run esbuild-client -- --sourcemap && npm run esbuild-server -- --sourcemap",
 		"lint": "eslint . --ext .ts,.tsx",
-		"test-compile": "npm run reset && tsc -p ./",
-		"test": "node ./out/test/runTest.js"
+		"test-compile": "npm run reset-client && tsc -p ./client/ && npm run reset-server && tsc -p ./server/",
+		"test": "node ./server/out/test/runTest.js && node ./client/out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.1.0",
-		"@types/node": "^14.16.0",
-		"@types/vscode": "^1.42.0",
+		"@types/glob": "^8.1.0",
+		"@types/mocha": "^10.0.1",
+		"@types/node": "^16.11.7",
+		"@types/vscode": "^1.75.0",
 		"@typescript-eslint/eslint-plugin": "^5.14.0",
 		"@typescript-eslint/parser": "^5.14.0",
-		"@vscode/test-electron": "^2.1.2",
-		"esbuild": "^0.14.25",
-		"eslint": "^7.21.0",
-		"glob": "^7.2.0",
-		"mocha": "^9.2.0",
-		"rimraf": "^3.0.2",
+		"@vscode/test-electron": "^2.3.2",
+		"esbuild": "^0.17.19",
+		"eslint": "^8.41.0",
+		"glob": "^10.2.6",
+		"mocha": "^10.2.0",
+		"rimraf": "^5.0.1",
 		"run-script-os": "^1.1.6",
-		"typescript": "^4.5.5"
+		"typescript": "^5.0.4"
 	}
 }

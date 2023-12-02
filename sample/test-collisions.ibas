@@ -1,0 +1,6 @@
+10 DSPX = 10
+20 NODSPY = 3
+30 NEXTX = 1
+50 NEXTX$ = "1.5"
+60 INPUTCOL$ = "blue"
+70 INPUTCOL = 1
