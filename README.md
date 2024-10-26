@@ -4,15 +4,11 @@
 
 Language support for Integer BASIC in Visual Studio Code.
 
-Latest update: LSP implementation, brings parity with Applesoft extension
-
 * Semantic highlights true to Apple ][ ROM parsing
-* Completions and hovers for all statements
-* Completions and hovers for soft switches, ROM routines, etc.
-* Diagnostics to identify errors and gotchas
-* Renumber lines in a selection or full document
-* Transfer programs to and from Apple ][ emulators (see below)
-* View tokenized program as hex dump and unicode text
+* Comprehensive diagnostics, completions, and hovers
+* Management of variables and line numbers
+* Transfer programs to and from emulators and disk images (see below)
+* Generate hex dump of tokenized program
 * Options : see `Ctrl+Comma` -> `Extensions` -> `Integer BASIC`
 * Commands: see `Ctrl+P` -> `integerbasic`
 * Activates for file extensions `.bas`, `.ibas`
@@ -23,9 +19,13 @@ Latest update: LSP implementation, brings parity with Applesoft extension
 
 If you use the file extension `.bas`, you may want to disable all other BASIC language extensions, since they will likely use that extension also.  You can use `.ibas` to encourage Integer BASIC to analyze the file while discouraging other BASIC.
 
+## Language Server
+
+The language server is usually bundled with the extension.  If your platform isn't supported directly, you may still be able to use the extension by running `cargo install a2kit` from the terminal.
+
 ## Line Numbers
 
-The extension will treat line numbers as document symbols if they are explicit branch destinations.  You can treat these line numbers just as if they were, say, function names in a modern language.  For example, if `GOSUB 100` is found in the document, right-clicking on any reference to line 100 allows you to apply symbol manipulations such as `goto references` and `goto definition`.  The text of any comment on or before the line will be used in the document outline and in line reference hovers.  On the other hand, `rename symbol` cannot be used with line numbers.  Instead, use the `renumber lines` command if you want to renumber.
+The extension will treat line numbers as document symbols if they are explicit branch destinations.  You can treat these line numbers just as if they were, say, function names in a modern language.  For example, if `GOSUB 100` is found in the document, right-clicking on any reference to line 100 allows you to apply symbol manipulations such as `goto references` and `goto definition`.  The text of any comment on or before the line will be used in the document outline and in line reference hovers.  On the other hand, `rename symbol` cannot be used with line numbers.  Instead, use the `renumber lines` or `move lines` commands to renumber (`move lines` will allow reordering).
 
 ## Managing Variables
 
@@ -98,14 +98,15 @@ This capability only applies to MacOS. Note that [Virtual \]\[](https://virtuali
 
 ## Using with Disk Images
 
-You can access files on a disk image.  In order to do this you must install `a2kit`.  If you have `cargo`, use the terminal to run `cargo install a2kit`, otherwise you can [download an executable](https://github.com/dfgordon/a2kit/releases), taking care to put it in your terminal's path.  As of this writing, the supported image types are `woz`, `dsk`, `do`, `po`, `d13`, `nib`, and `2mg`, assuming the latest `a2kit` is installed.
+You can transfer programs to and from disk images.  As of this writing, the supported disk image types are `2mg`, `d13`, `do`, `dsk`, `nib`, `po`, `woz`.  Use `Ctrl+P` or `Cmd+P` to initiate one of the following:
 
 * `integerbasic: Insert program from disk image`: brings up a file selector allowing you to choose an image file.  Once done, use the mini-menu to traverse the image's directory tree (if applicable) and select an Integer file.  Only directories and Integer files are shown.
 
 * `integerbasic: Save program to disk image`: Use the file selector to choose the image file, then use the mini-menu to traverse the image's directory tree (if applicable) and select a directory (`.` selects the current level).  Finally enter the name that the saved file will be given on the disk image.  If the file already exists you must respond to a warning.
 
+Another way to access disk images directly from VS Code is with the `Disk Image Notebook` extension.
+
 Recommendations
 
 * do not write to a disk image that is mounted in an emulator
 * backup disk image before writing to it
-* update `a2kit` from time to time (updating the extension itself will not do so)
