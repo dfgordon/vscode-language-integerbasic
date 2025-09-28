@@ -95,8 +95,8 @@ export function activate(context: vscode.ExtensionContext)
 		if (client.initializeResult?.serverInfo?.version) {
 			const vstr = client.initializeResult.serverInfo.version;
 			const v= vstr.split('.')
-			if (parseInt(v[0]) != 3) {
-				vscode.window.showErrorMessage('Server version is ' + vstr + ', expected 3.x, stopping.');
+			if (parseInt(v[0]) != 4) {
+				vscode.window.showErrorMessage('Server version is ' + vstr + ', expected 4.x, stopping.');
 				client.stop();
 			}
 		} else {
@@ -114,19 +114,19 @@ export function activate(context: vscode.ExtensionContext)
 	const highlighter = new tok.SemanticTokensProvider();
 	highlighter.register();
 
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.runNewVii",viiEntry.runNewVirtualII,viiEntry));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.runFrontVii",viiEntry.runFrontVirtualII,viiEntry));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.enterNewVii",viiEntry.enterNewVirtualII,viiEntry));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.enterFrontVii",viiEntry.enterFrontVirtualII,viiEntry));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.getFrontVii",viiEntry.getFrontVirtualII,viiEntry));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.getAppleWinSaveState",appleWin.getAppleWinSaveState,appleWin));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.setAppleWinSaveState",appleWin.setAppleWinSaveState,appleWin));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.getFromDiskImage", a2kit.getIntegerFile, a2kit));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.saveToDiskImage", a2kit.putIntegerFile, a2kit));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.showTokenizedProgram",tokenizer.showTokenizedProgram,tokenizer));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.renumber",renumberer.renumber,renumberer));
-	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.move",renumberer.move,renumberer));
-	context.subscriptions.push(vscode.commands.registerTextEditorCommand("integerbasic.commentLines",com.commentLinesCommand));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.runNewVii",viiEntry.runNewVirtualII,viiEntry));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.runFrontVii",viiEntry.runFrontVirtualII,viiEntry));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.enterNewVii",viiEntry.enterNewVirtualII,viiEntry));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.enterFrontVii",viiEntry.enterFrontVirtualII,viiEntry));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.getFrontVii",viiEntry.getFrontVirtualII,viiEntry));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.getAppleWinSaveState",appleWin.getAppleWinSaveState,appleWin));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.setAppleWinSaveState",appleWin.setAppleWinSaveState,appleWin));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.getFromDiskImage", a2kit.getIntegerFile, a2kit));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.saveToDiskImage", a2kit.putIntegerFile, a2kit));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.showTokenizedProgram",tokenizer.showTokenizedProgram,tokenizer));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.renumber",renumberer.renumber,renumberer));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.move",renumberer.move,renumberer));
+	context.subscriptions.push(vscode.commands.registerTextEditorCommand("integerbasic.client.commentLines",com.commentLinesCommand));
 }
 
 export function deactivate(): Thenable<void> | undefined {

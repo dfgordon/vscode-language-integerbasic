@@ -3,7 +3,7 @@
 	"displayName": "Integer BASIC",
 	"description": "Language support for Integer BASIC",
 	"icon": "language-intbasic-icon.png",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"license": "GPL-3.0-only",
 	"publisher": "dfgordon",
 	"repository": {
@@ -128,110 +128,110 @@
 		],
 		"commands": [
 			{
-				"command": "integerbasic.commentLines",
+				"command": "integerbasic.client.commentLines",
 				"title": "integerbasic: (Un)Comment Selection"
 			},
 			{
-				"command": "integerbasic.renumber",
+				"command": "integerbasic.client.renumber",
 				"title": "integerbasic: Renumber Lines"
 			},
 			{
-				"command": "integerbasic.move",
+				"command": "integerbasic.client.move",
 				"title": "integerbasic: Move Lines"
 			},
 			{
-				"command": "integerbasic.runFrontVii",
+				"command": "integerbasic.client.runFrontVii",
 				"title": "integerbasic: Run in Virtual ][ front machine"
 			},
 			{
-				"command": "integerbasic.enterFrontVii",
+				"command": "integerbasic.client.enterFrontVii",
 				"title": "integerbasic: Enter in Virtual ][ front machine"
 			},
 			{
-				"command": "integerbasic.runNewVii",
+				"command": "integerbasic.client.runNewVii",
 				"title": "integerbasic: Run in Virtual ][ new machine"
 			},
 			{
-				"command": "integerbasic.enterNewVii",
+				"command": "integerbasic.client.enterNewVii",
 				"title": "integerbasic: Enter in Virtual ][ new machine"
 			},
 			{
-				"command": "integerbasic.getFrontVii",
+				"command": "integerbasic.client.getFrontVii",
 				"title": "integerbasic: Insert program from Virtual ][ front machine"
 			},
 			{
-				"command": "integerbasic.getAppleWinSaveState",
+				"command": "integerbasic.client.getAppleWinSaveState",
 				"title": "integerbasic: Insert program from AppleWin save state"
 			},
 			{
-				"command": "integerbasic.setAppleWinSaveState",
+				"command": "integerbasic.client.setAppleWinSaveState",
 				"title": "integerbasic: Store program in AppleWin save state"
 			},
 			{
-				"command": "integerbasic.getFromDiskImage",
+				"command": "integerbasic.client.getFromDiskImage",
 				"title": "integerbasic: Insert program from disk image"
 			},
 			{
-				"command": "integerbasic.saveToDiskImage",
+				"command": "integerbasic.client.saveToDiskImage",
 				"title": "integerbasic: Save program to disk image"
 			},
 			{
-				"command": "integerbasic.showTokenizedProgram",
+				"command": "integerbasic.client.showTokenizedProgram",
 				"title": "integerbasic: Show tokenized program"
 			}
 		],
 		"menus": {
 			"commandPalette": [
 				{
-					"command": "integerbasic.commentLines",
+					"command": "integerbasic.client.commentLines",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.renumber",
+					"command": "integerbasic.client.renumber",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.move",
+					"command": "integerbasic.client.move",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.runFrontVii",
+					"command": "integerbasic.client.runFrontVii",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.enterFrontVii",
+					"command": "integerbasic.client.enterFrontVii",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.runNewVii",
+					"command": "integerbasic.client.runNewVii",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.enterNewVii",
+					"command": "integerbasic.client.enterNewVii",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.getFrontVii",
+					"command": "integerbasic.client.getFrontVii",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.getAppleWinSaveState",
+					"command": "integerbasic.client.getAppleWinSaveState",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.setAppleWinSaveState",
+					"command": "integerbasic.client.setAppleWinSaveState",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.getFromDiskImage",
+					"command": "integerbasic.client.getFromDiskImage",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.saveToDiskImage",
+					"command": "integerbasic.client.saveToDiskImage",
 					"when": "editorLangId == integerbasic"
 				},
 				{
-					"command": "integerbasic.showTokenizedProgram",
+					"command": "integerbasic.client.showTokenizedProgram",
 					"when": "editorLangId == integerbasic"
 				}
 			]
