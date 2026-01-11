@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as lxbase from './langExtBase';
 import * as tok from './semanticTokens';
 import * as com from './commands';
 import * as dimg from './diskImage';
@@ -127,6 +128,22 @@ export function activate(context: vscode.ExtensionContext)
 	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.renumber",renumberer.renumber,renumberer));
 	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.move",renumberer.move,renumberer));
 	context.subscriptions.push(vscode.commands.registerTextEditorCommand("integerbasic.client.commentLines",com.commentLinesCommand));
+
+	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+		if (editor?.document.languageId == 'integerbasic') {
+			if (vscode.workspace.workspaceFolders) {
+				try {
+					lxbase.request<null>("integerbasic.activeEditorChanged", [
+						editor.document.uri.toString()
+					]);
+				} catch (error) {
+					if (error instanceof Error)
+						vscode.window.showErrorMessage(error.message);
+				}
+			}
+		}
+	}));
+
 }
 
 export function deactivate(): Thenable<void> | undefined {
