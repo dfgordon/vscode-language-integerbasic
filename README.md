@@ -4,14 +4,13 @@
 
 Language support for Integer BASIC in Visual Studio Code.
 
-* Semantic highlights true to Apple ][ ROM parsing
+* Syntax highlights true to Apple ][ ROM parsing
 * Comprehensive diagnostics, completions, and hovers
 * Management of variables and line numbers
-* Transfer programs to and from emulators and disk images (see below)
+* Interact with [emulators](#using-with-emulators) and [disk images](#using-with-disk-images)
 * Generate hex dump of tokenized program
-* Options : see `Ctrl+Comma` -> `Extensions` -> `Integer BASIC`
-* Commands: see `Ctrl+P` -> `integerbasic`
-* Activates for file extensions `.bas`, `.ibas`
+
+Activates for file extensions `.bas`, `.ibas`
 
 <img src="sample/demo.png" alt="session capture"/>
 
@@ -37,15 +36,25 @@ Variables only appear in the symbol outline where they are assigned, dimensioned
 
 ## Declarations and Definitions
 
-The `DIM` statement is the only item we recognize as a declaration.  Using `goto declaration` on an array reference will find all the places in the file where it is dimensioned.
+The `DIM` statement is the only item we recognize as a declaration.  Using `goto declaration` on an array reference will find all the places in the program where it is dimensioned.  Also works with multi-file programs.
 
-Using `goto definition` on a variable will find all the places in the file where it is assigned or read from an input source.
+Using `goto definition` on a variable will find all the places in the program where it is assigned or read from an input source.  Also works with multi-file programs.
 
 Using `goto definition` on a line number reference will find the line.
 
-## Multi-File Programs and Program Flow
+## Multi-File Programs
 
-As of this writing, the extension analyzes each file in isolation.  This is why, e.g., undimensioned array references trigger a warning rather than an error (the array might be dimensioned in another file).  Also as of this writing, the extension does not try to follow the program's flow.  As a result, errors such as `BAD NEXT ERR` are not detected.
+Integer BASIC variables are passed from program to program using the DOS CHAIN command.  The extension will fully analyze the CHAIN relationships between files and use this information to improve detection of undeclared or undefined variables.
+
+It is possible to miss the chain pattern due to the many ways a programmer could create it, e.g. `PRINT A$` could be a CHAIN.  To avoid this problem:
+
+* Isolate the hook as either `CHR$(4)`, a separate string variable, or a literal ASCII 4
+* Always keep the CHAIN command and program name literal
+
+In analyzing the CHAIN relationships it is necessary to match program names and source names.  The extension will rank the files it finds in the workspace based on matching names and path fragments.  For the matching to succeed:
+
+* Use `.bas` or `.ibas` for the source files
+* The program name in the CHAIN command should not include the filename extension
 
 ## Tokenizer
 
@@ -72,7 +81,9 @@ Save State Interaction | AppleWin | Yes
 Enter/Run Program | Virtual II | No
 Copy & Paste | any | No
 
-## Using with AppleWin
+## Using with Emulators
+
+### AppleWin
 
 You can transfer programs to and from [AppleWin](https://github.com/AppleWin/AppleWin).  One way is to use the emulator's own clipboard functions.  The extension also provides the following save state interactions:
 
@@ -84,7 +95,7 @@ You can transfer programs to and from [AppleWin](https://github.com/AppleWin/App
 
 Operations with the state file are the same on any platform, but [AppleWin](https://github.com/AppleWin/AppleWin) itself is native to Windows.  Note that [AppleWin](https://github.com/AppleWin/AppleWin) is not part of the extension, and must be installed separately.
 
-## Using with Virtual ][
+### Virtual ][
 
 You can transfer programs to and from the [Virtual \]\[](https://virtualii.com) emulator.  One way is to use the emulator's own clipboard functions.  The extension also provides the following commands (`Cmd+P`):
 
