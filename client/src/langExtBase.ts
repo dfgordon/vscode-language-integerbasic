@@ -8,7 +8,7 @@ export const VariableTypes = [
 	'int_name',
 ];
 
-type ArgType = null | undefined | boolean | string | string[] | number[] |
+type ArgType = null | undefined | boolean | string | string[] | number | number[] |
 	vsclnt.Range | vsclnt.TextDocumentItem;
 
 export function verify_document() : {ed:vscode.TextEditor,doc:vscode.TextDocument} | undefined {

@@ -1,0 +1,3 @@
+10 dim a$(16): x = 5 : print a
+20 print "CHAIN CHAIN1"
+30 end

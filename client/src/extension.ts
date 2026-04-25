@@ -106,14 +106,25 @@ export function activate(context: vscode.ExtensionContext)
 	});
 	client.outputChannel.appendLine("using server " + serverCommand);
 
+	const chainButton = vscode.window.createStatusBarItem();
+	chainButton.text = "backlinks";
+	chainButton.tooltip = "switch to a CHAIN backlink";
+	chainButton.command = "integerbasic.client.selectBacklink";
+
 	const renumberer = new com.RenumberTool(context);
 	const viiEntry = new com.ViiEntryTool(context);
 	const appleWin = new com.AppleWinTool(context);
 	const a2kit = new dimg.A2KitTool(context);
 	const tokenizer = new com.TokenizationTool(context);
+	const backlinkSelect = new com.BacklinkSelect(chainButton);
 
 	const highlighter = new tok.SemanticTokensProvider();
 	highlighter.register();
+
+	const startEditor = vscode.window.activeTextEditor;
+	if (startEditor?.document.languageId == "integerbasic") {
+		chainButton.show();
+	}
 
 	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.runNewVii",viiEntry.runNewVirtualII,viiEntry));
 	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.runFrontVii",viiEntry.runFrontVirtualII,viiEntry));
@@ -127,10 +138,12 @@ export function activate(context: vscode.ExtensionContext)
 	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.showTokenizedProgram",tokenizer.showTokenizedProgram,tokenizer));
 	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.renumber",renumberer.renumber,renumberer));
 	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.move",renumberer.move,renumberer));
+	context.subscriptions.push(vscode.commands.registerCommand("integerbasic.client.selectBacklink", backlinkSelect.selectBacklink, backlinkSelect));
 	context.subscriptions.push(vscode.commands.registerTextEditorCommand("integerbasic.client.commentLines",com.commentLinesCommand));
 
 	context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
 		if (editor?.document.languageId == 'integerbasic') {
+			chainButton.show();
 			if (vscode.workspace.workspaceFolders) {
 				try {
 					lxbase.request<null>("integerbasic.activeEditorChanged", [
@@ -141,6 +154,8 @@ export function activate(context: vscode.ExtensionContext)
 						vscode.window.showErrorMessage(error.message);
 				}
 			}
+		} else {
+			chainButton.hide();
 		}
 	}));
 

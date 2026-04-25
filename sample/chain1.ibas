@@ -1,0 +1,4 @@
+10 a$ = "xyz": print a$(x)
+20 y = x + 5
+30 print "CHAIN CHAIN2"
+40 end

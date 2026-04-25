@@ -1,0 +1,4 @@
+10 print z
+20 print y
+30 print "CHAIN CHAIN0"
+40 end

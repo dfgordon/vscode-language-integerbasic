@@ -3,7 +3,7 @@
 	"displayName": "Integer BASIC",
 	"description": "Language support for Integer BASIC",
 	"icon": "language-intbasic-icon.png",
-	"version": "2.2.1",
+	"version": "2.3.0",
 	"license": "GPL-3.0-only",
 	"publisher": "dfgordon",
 	"repository": {
@@ -178,6 +178,10 @@
 			{
 				"command": "integerbasic.client.showTokenizedProgram",
 				"title": "integerbasic: Show tokenized program"
+			},
+			{
+				"command": "integerbasic.client.selectBacklink",
+				"title": "integerbasic: Select chain backlink"
 			}
 		],
 		"menus": {
@@ -232,6 +236,10 @@
 				},
 				{
 					"command": "integerbasic.client.showTokenizedProgram",
+					"when": "editorLangId == integerbasic"
+				},
+				{
+					"command": "integerbasic.client.selectBacklink",
 					"when": "editorLangId == integerbasic"
 				}
 			]
